@@ -1,6 +1,6 @@
 package tpNivelador;
 
-import java.util.InputMismatchException;
+//import java.util.Inp1utMismatchException;
 import java.util.Scanner;
 
 public class lollapalooza {
@@ -13,7 +13,7 @@ public class lollapalooza {
 		
 		final boolean MODO_PRUEBA = true;
 		if(MODO_PRUEBA == true) {
-			cargarDatosPrueba(artista, mueveAlmacenamiento);
+			mueveAlmacenamiento = cargarDatosPrueba(artista, mueveAlmacenamiento);
 		}
 		
 		do {
@@ -33,14 +33,14 @@ public class lollapalooza {
 		System.out.println("Estadisticas del festival");
 		System.out.println("------------------------------------------------");
 		int opcion = s.nextInt();
-		mueveAlmacenamiento = mostrarMenuYElegirOpcion(opcion, s, artista, mueveAlmacenamiento);
+		mueveAlmacenamiento = mostrarMenuYElegirOpcion(opcion, s, artista, mueveAlmacenamiento, ID_MIN, ID_MAX);
 		} while(true);
 	}
 	
-	public static int mostrarMenuYElegirOpcion(int opcion, Scanner s, String[][] artista, int mueveAlmacenamiento) {
+	public static int mostrarMenuYElegirOpcion(int opcion, Scanner s, String[][] artista, int mueveAlmacenamiento, final int ID_MIN, final int ID_MAX) {
 		switch(opcion) {
 		case 1:
-			mueveAlmacenamiento = ingresarArtista(s, artista, mueveAlmacenamiento);
+			mueveAlmacenamiento = ingresarArtista(s, artista, mueveAlmacenamiento, ID_MIN, ID_MAX );
 			break;
 		case 2:
 			buscarArtista(s, artista, mueveAlmacenamiento, mueveAlmacenamiento);
@@ -57,10 +57,11 @@ public class lollapalooza {
 		return mueveAlmacenamiento;
 	}
 	
-	public static int ingresarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento) {
-		System.out.println("Ingrese el artista/banda");
+	public static int ingresarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento, final int ID_MIN, final int ID_MAX) {
 		System.out.println("Ingrese una ID (desde 1 hasta 999):");
 		final int ID = s.nextInt();
+		validarID(ID,ID_MIN,ID_MAX);
+		chekearID(ID,artista,mueveAlmacenamiento);
 		s.nextLine();
 		System.out.println("Ingrese el nobmre de la banda o el artista que va a tocar:");
 		final String NOMBRE_BANDA_ARTISTA = s.nextLine();
@@ -99,11 +100,18 @@ public class lollapalooza {
 		//Creo que aca tengo que usar los try catch pero realmente no se como avanzar con esta funcion
 	}
 	
-	public void validarID(int ID, final int ID_MIN, final int ID_MAX) {
-		//Creo que aca tengo que usar los try catch pero realmente no se como avanzar con esta funcion
-		if(ID_MIN > ID_MAX) {
+	public static void validarID(int ID, final int ID_MIN, final int ID_MAX) {
+		if(ID>ID_MAX || ID<ID_MIN) {
 			System.out.println("Error, el valor minimo no puede ser mayor al maximo");
 			System.exit(1);
+		}
+	}
+	
+	public static void chekearID(int ID, String[][] artista, int mueveAlmacenamiento ) {
+		for(int i = 0; i < mueveAlmacenamiento; i++) {
+			if(Integer.parseInt(artista[i][0]) == ID) {
+				System.out.println("Error ya existe");
+			}
 		}
 	}
 	
@@ -111,14 +119,13 @@ public class lollapalooza {
 		System.out.println("Perfecto! Por favor, ingrese la ID que tiene su Artista/Banda musical:");
 		ID = s.nextInt();
 		for(int i = 0; i < mueveAlmacenamiento; i++) {
-			if(artista[i][0] == Integer.toString(ID)) {
+			if(Integer.parseInt(artista[i][0]) == ID) {
 				/*for(int j = 0; j < artista[i].length; j++) {
 					System.out.println(" " + artista[i][j]);
 				}*/
 				System.out.println("|Id: " + artista[i][0] + "| Nombre del Artista/Banda: " + artista[i][1] + " |Genero: " + artista[i][2] + " |Dia de presentacion: " + artista[i][3]);
 				System.out.println("|Escenario: " + artista[i][4] + " |Hora de inicio " + artista[i][5] + " |Duracion en minutos: " + artista[i][6] + " |Popularidad de la banda: " + artista[i][7]);
 			}
-			
 		}
 	}
 	

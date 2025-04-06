@@ -111,7 +111,7 @@ public class lollapalooza {
 		System.out.println("Perfecto! Por favor, ingrese la ID que tiene su Artista/Banda musical:");
 		ID = s.nextInt();
 		for(int i = 0; i < mueveAlmacenamiento; i++) {
-			if(Integer.parseInt(artista[i][0]) == ID) {
+			if(artista[i][0] == Integer.toString(ID)) {
 				/*for(int j = 0; j < artista[i].length; j++) {
 					System.out.println(" " + artista[i][j]);
 				}*/

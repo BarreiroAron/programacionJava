@@ -168,41 +168,72 @@ public class lollapalooza {
 	}
 	
 	public static void modificarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento) {
-		System.out.println("Por favor, ingrese la ID de la banda que quiere modificar algo: ");
-		int ID = s.nextInt();
-	    int indice = validarID(ID, artista, ID);
-		if(indice == -1) {
-			System.out.println("ID de Artista/Banda no encontrado.");
-		}
-		System.out.println("Ahora, ingrese que dato quiere modificar, por favor: ");
-		System.out.println("Recuerde que: (1 id) (2 Nombre) (3 genero) (4 dia) (5 escenario) (6 hora de inicio) (7 duracion) (8 popularidad)");
-		int cambiarCosa = s.nextInt();
-		String campo = (cambiarCosa == 1) ? "ID": (cambiarCosa == 2) ? "Nombre": (cambiarCosa ==3) ? "Genero": (cambiarCosa == 4) ? "Dia": (cambiarCosa == 5) ? "Escenario": (cambiarCosa == 6) ? "hora de inicio": (cambiarCosa == 7) ? "Duracion": (cambiarCosa == 8) ? "Popularidad": "Dato invalido";
-		System.out.println("Ahora ingrese que es lo que quieren poner en " + campo);
-	    if(campo.equals("Dato invalido")) {
+	    System.out.println("Por favor, ingrese la ID de la banda que quiere modificar algo: ");
+	    int ID_a_modificar = s.nextInt();
+	    int indice_a_modificar = validarID(ID_a_modificar, artista, mueveAlmacenamiento);
+	    s.nextLine();
+
+	    if (indice_a_modificar == -1) {
+	        System.out.println("ID de Artista/Banda no encontrado.");
+	        return;
+	    }
+
+	    System.out.println("Ahora, ingrese que dato quiere modificar, por favor: ");
+	    System.out.println("Recuerde que: (1 id) (2 Nombre) (3 genero) (4 dia) (5 escenario) (6 hora de inicio) (7 duracion) (8 popularidad)");
+	    String cambiarCosaStr = s.nextLine();
+	    int cambiarCosa;
+	    try {
+	        cambiarCosa = Integer.parseInt(cambiarCosaStr);
+	    } catch (NumberFormatException e) {
+	        System.out.println("Entrada inválida. Por favor, ingrese el número de la opción.");
+	        return;
+	    }
+
+	    String campo = (cambiarCosa == 1) ? "ID" : (cambiarCosa == 2) ? "Nombre" : (cambiarCosa == 3) ? "Genero" : (cambiarCosa == 4) ? "Dia" : (cambiarCosa == 5) ? "Escenario" : (cambiarCosa == 6) ? "hora de inicio" : (cambiarCosa == 7) ? "Duracion" : (cambiarCosa == 8) ? "Popularidad" : "Dato invalido";
+	    System.out.println("Ahora ingrese que es lo que quieren poner en " + campo);
+
+	    if (campo.equals("Dato invalido")) {
 	        System.out.println("No existe un dato como ese.");
 	        return;
 	    }
-	    if(cambiarCosa == 2) {
-	    	s.nextLine();
-	    	String respuestaNombre = s.nextLine();
-	    	System.out.println("Dato cambiado.");
-	    	artista[ID][cambiarCosa - 1] = respuestaNombre; //aca no funciona
- 	    } else {
-		int respuesta = s.nextInt();
-		artista[ID][cambiarCosa - 1] = Integer.toString(respuesta); //aca no funciona 
-		System.out.println("Dato cambiado.");
-		}
+
+	    if (cambiarCosa == 1) { 
+	        System.out.println("Ingrese la nueva ID para la banda:");
+	        String nuevaIDStr = s.nextLine();
+	        try {
+	            int nuevaID = Integer.parseInt(nuevaIDStr);
+	            if (validarID(nuevaID, artista, mueveAlmacenamiento) != -1) {
+	                System.out.println("Ya existe un artista con la ID: " + nuevaID + ". No se puede modificar la ID.");
+	            } else {
+	                artista[indice_a_modificar][cambiarCosa - 1] = nuevaIDStr;
+	                System.out.println("ID del artista modificada.");
+	            }
+	        } catch (InputMismatchException e) {
+	            System.out.println("ID inválida. Por favor, ingrese un número entero.");
+	        }
+	    } else if (cambiarCosa == 2) {
+	        String respuestaNombre = s.nextLine();
+	        artista[indice_a_modificar][cambiarCosa - 1] = respuestaNombre;
+	        System.out.println("Nombre del artista modificado.");
+	    } else {
+	        String respuestaStr = s.nextLine();
+	        try {
+	            int respuesta = Integer.parseInt(respuestaStr);
+	            artista[indice_a_modificar][cambiarCosa - 1] = Integer.toString(respuesta);
+	            System.out.println("Dato del artista modificado.");
+	        } catch (InputMismatchException e) {
+	            System.out.println("Por favor, ingrese un valor numérico para este campo.");
+	        }
+	    }
 	}
 	
 	public static int eliminarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento) {
 	    System.out.println("Por favor, ingrese la ID del Artista/Banda a eliminar: ");
 	    int id = s.nextInt();
 	    int indice = -1;
-	    for (int i = 0; i < mueveAlmacenamiento; i++) {
+	    for (int i = 0; i < mueveAlmacenamiento && indice == -1; i++) {
 			if (Integer.parseInt(artista[i][0]) == id) {
 	            indice = i;
-	            return i = 0; //hay que encontrar una nueva forma de hacer eliminarArtista
 	        }
 	    }
 	    if (indice == -1) {

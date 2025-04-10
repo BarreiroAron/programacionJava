@@ -14,7 +14,7 @@ public class lollapalooza {
 		Scanner s = new Scanner(System.in);
 		boolean salir = true;
 		
-		final boolean MODO_PRUEBA = true;
+		final boolean MODO_PRUEBA = false;
 		if(MODO_PRUEBA == true) {
 			mueveAlmacenamiento = cargarDatosPrueba(artista, mueveAlmacenamiento);
 		}
@@ -27,7 +27,7 @@ public class lollapalooza {
 		System.out.println("Registrar Artista/Banda (1)"); //hecho
 		System.out.println("Consultar Artista/Banda (2)"); //hecho
 		System.out.println("Modificar datos de Artista/Banda (3)"); //hecho
-		System.out.println("Eliminar Artista/Banda (4)"); //hecho (solo hay un pequeño inconveniente)(inconveniente solucionado)
+		System.out.println("Eliminar Artista/Banda (4)"); //hecho (solo hay un pequeño inconveniente)
 		System.out.println("Lista de Artistas/Bandas (5)"); //hecho
 		System.out.println("Cronograma en el dia (6)"); //En progreso, falta mucho
 		System.out.println("Cronograma por escenario (7)");
@@ -40,14 +40,14 @@ public class lollapalooza {
 		if(opcion == 11) {
 			salir = false;
 		}
-		mueveAlmacenamiento = mostrarMenuYElegirOpcion(opcion, s, artista, mueveAlmacenamiento);
+		mueveAlmacenamiento = mostrarMenuYElegirOpcion(opcion, s, artista, mueveAlmacenamiento, ID_MIN, ID_MAX);
 		} while(salir);
 	}
 	
-	public static int mostrarMenuYElegirOpcion(int opcion, Scanner s, String[][] artista, int mueveAlmacenamiento) {
+	public static int mostrarMenuYElegirOpcion(int opcion, Scanner s, String[][] artista, int mueveAlmacenamiento, int ID_MIN, int ID_MAX) {
 		switch(opcion) {
 		case 1:
-			mueveAlmacenamiento = ingresarArtista(s, artista, mueveAlmacenamiento);
+			mueveAlmacenamiento = ingresarArtista(s, artista, mueveAlmacenamiento, ID_MIN, ID_MAX);
 			break;
 		case 2:
 			consultarArtista(s, artista, mueveAlmacenamiento, mueveAlmacenamiento);
@@ -91,26 +91,31 @@ public class lollapalooza {
 		return mueveAlmacenamiento;
 	}
 	
-	public static int ingresarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento) {
+	public static int ingresarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento, int ID_MIN, int ID_MAX) {
+		final int GENERO_MAX = 7, GENERO_MIN = 1;
+		final int DIA_MAX = 3, DIA_MIN = 1;
+		final int ESCENARIO_MIN = 1, ESCENARIO_MAX = 4;
+		final int HORA_MIN = 12, HORA_MAX = 23;
+		final int DURACION_MIN = 30, DURACION_MAX = 120;
+		final int POPULARIDAD_MIN = 1, POPULARIDAD_MAX = 10;
 		System.out.println("Ingrese el artista/banda");
 		System.out.println("Ingrese una ID (desde 1 hasta 999):");
-		int ID = s.nextInt();
+		int ID = ingresarEntero(s, ID_MIN, ID_MAX);
 		System.out.println("Ingrese el nombre de la banda o el artista que va a tocar:");
-		s.nextLine();
 		final String NOMBRE_BANDA_ARTISTA = s.nextLine();
 		System.out.println("Ingrese el genero musical que toca su artista:");
 		System.out.println("1 \"Rock\" - 2  \"Pop\" - 3  \"Electrónica\" - 4  \"Hip Hop\" - 5  \"Indie\" - 6  \"Metal\" - 7  \"Otros\"");
-		final int GENERO_MUSICAL = s.nextInt();
+		final int GENERO_MUSICAL = ingresarEntero(s, GENERO_MIN, GENERO_MAX);
 		System.out.println("Ingrese el dia de su presentación: (1 \"Dia 1\" - 2 \"Dia 2\" - 3 \"Dia 3\"");
-		final int DIA_PRESENTACION = s.nextInt();
+		final int DIA_PRESENTACION = ingresarEntero(s, DIA_MIN, DIA_MAX);
 		System.out.println("En que escenario va a tocar su artista?? (1 Principal - 2 Alternativo - 3 Electronica - 4 Acustico):");
-		final int ESCENARIO = s.nextInt();
+		final int ESCENARIO = ingresarEntero(s, ESCENARIO_MIN, ESCENARIO_MAX);
 		System.out.println("Ingrese la hora en que va a tocar su artista: (Entre las 12 de la mañana y las 23 de la noche):");
-		final int HORA_INICIO = s.nextInt();
+		final int HORA_INICIO = ingresarEntero(s, HORA_MIN, HORA_MAX); //verificarSuperposicion(s, HORA_MIN, HORA_MAX, );
 		System.out.println("Ingrese la duración del espectaculo de su banda en minutos: (Entre 30 minutos a 120 minutos):");
-		final int DURACION = s.nextInt();
+		final int DURACION = ingresarEntero(s, DURACION_MIN, DURACION_MAX);
 		System.out.println("Ingrese la popularidad de la banda: (Desde una escala del 1 al 10. Diez, representando la mas famosa):");
-		final int POPULARIDAD = s.nextInt();
+		final int POPULARIDAD = ingresarEntero(s, POPULARIDAD_MIN, POPULARIDAD_MAX);
 		
 		artista[mueveAlmacenamiento][0] = Integer.toString(ID);
 		artista[mueveAlmacenamiento][1] = NOMBRE_BANDA_ARTISTA;
@@ -130,6 +135,12 @@ public class lollapalooza {
 	}
 	
 	public static int validarID(int id, String[][] artista, int mueveAlmacenamiento) {
+	/*s	for(int i = 0; i < mueveAlmacenamiento; i++) {
+			if(Integer.parseInt(artista[i][0]) == ID) {
+				System.out.println("Error, tiene que ingresar una ID diferente al resto.");
+			}
+		}
+		ID = s.nextInt();*/
 	    int indice = -1;
 	    for (int i = 0; i < mueveAlmacenamiento; i++) {
 	        if (Integer.parseInt(artista[i][0]) == id) {
@@ -157,72 +168,41 @@ public class lollapalooza {
 	}
 	
 	public static void modificarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento) {
-	    System.out.println("Por favor, ingrese la ID de la banda que quiere modificar algo: ");
-	    int ID_a_modificar = s.nextInt();
-	    int indice_a_modificar = validarID(ID_a_modificar, artista, mueveAlmacenamiento);
-	    s.nextLine();
-
-	    if (indice_a_modificar == -1) {
-	        System.out.println("ID de Artista/Banda no encontrado.");
-	        return;
-	    }
-
-	    System.out.println("Ahora, ingrese que dato quiere modificar, por favor: ");
-	    System.out.println("Recuerde que: (1 id) (2 Nombre) (3 genero) (4 dia) (5 escenario) (6 hora de inicio) (7 duracion) (8 popularidad)");
-	    String cambiarCosaStr = s.nextLine();
-	    int cambiarCosa;
-	    try {
-	        cambiarCosa = Integer.parseInt(cambiarCosaStr);
-	    } catch (NumberFormatException e) {
-	        System.out.println("Entrada inválida. Por favor, ingrese el número de la opción.");
-	        return;
-	    }
-
-	    String campo = (cambiarCosa == 1) ? "ID" : (cambiarCosa == 2) ? "Nombre" : (cambiarCosa == 3) ? "Genero" : (cambiarCosa == 4) ? "Dia" : (cambiarCosa == 5) ? "Escenario" : (cambiarCosa == 6) ? "hora de inicio" : (cambiarCosa == 7) ? "Duracion" : (cambiarCosa == 8) ? "Popularidad" : "Dato invalido";
-	    System.out.println("Ahora ingrese que es lo que quieren poner en " + campo);
-
-	    if (campo.equals("Dato invalido")) {
+		System.out.println("Por favor, ingrese la ID de la banda que quiere modificar algo: ");
+		int ID = s.nextInt();
+	    int indice = validarID(ID, artista, ID);
+		if(indice == -1) {
+			System.out.println("ID de Artista/Banda no encontrado.");
+		}
+		System.out.println("Ahora, ingrese que dato quiere modificar, por favor: ");
+		System.out.println("Recuerde que: (1 id) (2 Nombre) (3 genero) (4 dia) (5 escenario) (6 hora de inicio) (7 duracion) (8 popularidad)");
+		int cambiarCosa = s.nextInt();
+		String campo = (cambiarCosa == 1) ? "ID": (cambiarCosa == 2) ? "Nombre": (cambiarCosa ==3) ? "Genero": (cambiarCosa == 4) ? "Dia": (cambiarCosa == 5) ? "Escenario": (cambiarCosa == 6) ? "hora de inicio": (cambiarCosa == 7) ? "Duracion": (cambiarCosa == 8) ? "Popularidad": "Dato invalido";
+		System.out.println("Ahora ingrese que es lo que quieren poner en " + campo);
+	    if(campo.equals("Dato invalido")) {
 	        System.out.println("No existe un dato como ese.");
 	        return;
 	    }
-
-	    if (cambiarCosa == 1) { 
-	        System.out.println("Ingrese la nueva ID para la banda:");
-	        String nuevaIDStr = s.nextLine();
-	        try {
-	            int nuevaID = Integer.parseInt(nuevaIDStr);
-	            if (validarID(nuevaID, artista, mueveAlmacenamiento) != -1) {
-	                System.out.println("Ya existe un artista con la ID: " + nuevaID + ". No se puede modificar la ID.");
-	            } else {
-	                artista[indice_a_modificar][cambiarCosa - 1] = nuevaIDStr;
-	                System.out.println("ID del artista modificada.");
-	            }
-	        } catch (InputMismatchException e) {
-	            System.out.println("ID inválida. Por favor, ingrese un número entero.");
-	        }
-	    } else if (cambiarCosa == 2) {
-	        String respuestaNombre = s.nextLine();
-	        artista[indice_a_modificar][cambiarCosa - 1] = respuestaNombre;
-	        System.out.println("Nombre del artista modificado.");
-	    } else {
-	        String respuestaStr = s.nextLine();
-	        try {
-	            int respuesta = Integer.parseInt(respuestaStr);
-	            artista[indice_a_modificar][cambiarCosa - 1] = Integer.toString(respuesta);
-	            System.out.println("Dato del artista modificado.");
-	        } catch (InputMismatchException e) {
-	            System.out.println("Por favor, ingrese un valor numérico para este campo.");
-	        }
-	    }
+	    if(cambiarCosa == 2) {
+	    	s.nextLine();
+	    	String respuestaNombre = s.nextLine();
+	    	System.out.println("Dato cambiado.");
+	    	artista[ID][cambiarCosa - 1] = respuestaNombre; //aca no funciona
+ 	    } else {
+		int respuesta = s.nextInt();
+		artista[ID][cambiarCosa - 1] = Integer.toString(respuesta); //aca no funciona 
+		System.out.println("Dato cambiado.");
+		}
 	}
 	
 	public static int eliminarArtista(Scanner s, String[][] artista, int mueveAlmacenamiento) {
 	    System.out.println("Por favor, ingrese la ID del Artista/Banda a eliminar: ");
 	    int id = s.nextInt();
 	    int indice = -1;
-	    for (int i = 0; i < mueveAlmacenamiento && indice == -1; i++) {
+	    for (int i = 0; i < mueveAlmacenamiento; i++) {
 			if (Integer.parseInt(artista[i][0]) == id) {
 	            indice = i;
+	            return i = 0; //hay que encontrar una nueva forma de hacer eliminarArtista
 	        }
 	    }
 	    if (indice == -1) {
@@ -254,9 +234,7 @@ public class lollapalooza {
 		}*/
 	}
 	
-	public static void verCronogramaPorEscenario(String[][] artista) {
-		
-	}
+	public void verCronogramaPorEscenario(String[][] artista) {}
 	
 	public static void buscarArtistasPorGenero(Scanner s, String[][] artista, final int GENERO_MUSICAL, int generoMomentaneo, int mueveAlmacenamiento) {
 		System.out.println("Por favor, ingrese el genero de su banda: ");
@@ -279,9 +257,7 @@ public class lollapalooza {
 		}
 	}
 	
-	public static void calcularEstadisticas() {
-		
-	}
+	public void calcularEstadisticas() {}
 	
 	public static int ingresarEntero(Scanner s, final int ID_MIN, final int ID_MAX) {
 		if(ID_MIN > ID_MAX) {
@@ -313,11 +289,46 @@ public class lollapalooza {
 		return numero;
 	}
 	
-	public static void verificarSuperposicion() {
+	public int verificarSuperposicion(Scanner s, final int ID_MIN, final int ID_MAX, int mueveAlmacenamiento, String[][] artista, final int ESCENARIO, final int HORA_INICIO) {
+		s.nextInt();
+		if(ID_MIN > ID_MAX) {
+			System.out.println("Error, el valor minimo no puede ser mayor al valor maximo");
+			System.exit(1);
+		}
+		boolean error = false;
 		
+		int numero = 0;		
+		do {
+			error = false;
+			try {
+				numero = s.nextInt();
+				if(numero < ID_MIN || numero > ID_MAX) {
+					System.out.println("Error." + ((ID_MAX == ID_MIN) ? ("ingresar el numero " + ID_MIN) : (" El numero debe estar entre " + ID_MIN + " y " + ID_MAX)));
+					System.out.println("Vuelva a ingresar");
+					error = true;
+				}
+			} catch(InputMismatchException e){
+				System.out.println("Error. Tipo de dato mal ingresado");
+				System.out.println("Vuelva a ingresar");
+				error = true;
+			} catch(Exception e) {
+				System.out.println(e.getMessage());
+			} finally {
+				s.nextLine();
+			}
+		} while(error);
+		
+		if(ESCENARIO == Integer.parseInt(artista[ID][4])) {
+		for(int i = 0; i < mueveAlmacenamiento; i++) {
+			if(HORA_INICIO == Integer.parseInt(artista[i][5])) {
+				
+				}
+			}
+		}
+		return numero;
 	}
 	
-	public static void formatearHora() {
+	public void formatearHora() {
 	}
 	
 	public static void imprimir(int i, String[][] artista) {

@@ -33,7 +33,7 @@ public class lollapalooza {
 		System.out.println("Cronograma por escenario (7)"); //HECHOOO
 		System.out.println("Buscar Artista/Banda por Genero (8)"); //hecho
 		System.out.println("Buscar Artista/Banda pro Popularidad (9)"); //hecho
-		System.out.println("Estadisticas del festival (10)"); //O B J E T I V O  A C T U A L
+		System.out.println("Estadisticas del festival (10)"); //O B J E T I V O  A C T U A L // tambien falta lo de superposicion y lo de formatearHora
 		System.out.println("Salir (11)"); //hecho
 		System.out.println("------------------------------------------------");
 		int opcion = s.nextInt();

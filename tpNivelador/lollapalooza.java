@@ -14,7 +14,7 @@ public class lollapalooza {
 		Scanner s = new Scanner(System.in);
 		boolean salir = true;
 		
-		final boolean MODO_PRUEBA = false;
+		final boolean MODO_PRUEBA = true;
 		if(MODO_PRUEBA == true) {
 			mueveAlmacenamiento = cargarDatosPrueba(artista, mueveAlmacenamiento);
 		}
@@ -29,11 +29,11 @@ public class lollapalooza {
 		System.out.println("Modificar datos de Artista/Banda (3)"); //hecho
 		System.out.println("Eliminar Artista/Banda (4)"); //hecho (solo hay un pequeño inconveniente)
 		System.out.println("Lista de Artistas/Bandas (5)"); //hecho
-		System.out.println("Cronograma en el dia (6)"); //En progreso, falta mucho
-		System.out.println("Cronograma por escenario (7)");
+		System.out.println("Cronograma en el dia (6)"); //HECHO
+		System.out.println("Cronograma por escenario (7)"); //HECHOOO
 		System.out.println("Buscar Artista/Banda por Genero (8)"); //hecho
 		System.out.println("Buscar Artista/Banda pro Popularidad (9)"); //hecho
-		System.out.println("Estadisticas del festival (10)");
+		System.out.println("Estadisticas del festival (10)"); //O B J E T I V O  A C T U A L
 		System.out.println("Salir (11)"); //hecho
 		System.out.println("------------------------------------------------");
 		int opcion = s.nextInt();
@@ -73,6 +73,7 @@ public class lollapalooza {
 			verCronogramaPorDia(s, artista, mueveAlmacenamiento, mueveAlmacenamiento, mueveAlmacenamiento);
 			break;
 		case 7:
+			verCronogramaPorEscenario(s, artista, mueveAlmacenamiento);
 			break;
 		case 8:
 			buscarArtistasPorGenero(s, artista, mueveAlmacenamiento, mueveAlmacenamiento, mueveAlmacenamiento);
@@ -81,6 +82,7 @@ public class lollapalooza {
 			buscarArtistasPorPopularidad(s, artista, mueveAlmacenamiento, mueveAlmacenamiento, mueveAlmacenamiento);
 			break;
 		case 10:
+			//calcularEstadisticas();
 			break;
 		case 11:
 			System.out.println("Saliendo. . . ");
@@ -152,7 +154,8 @@ public class lollapalooza {
 	}
 	
 	public static int buscarArtitsa(Scanner s) {
-		int elegir = s.nextInt();
+		final int ID_MIN = 1, ID_MAX = 999;
+		int elegir = ingresarEntero(s, ID_MIN, ID_MAX);
 		return elegir;
 		}
 	
@@ -256,21 +259,40 @@ public class lollapalooza {
 	}
 	
 	public static void verCronogramaPorDia(Scanner s, String[][] artista, final int ID, int mueveAlmacenamiento, final int DIA_PRESENTACION) {
-		System.out.println("Por favor, ingrese el dia para ver las bandas que tocaran ahi.");
-		int dia = s.nextInt();
-		/*for(int i = 0; i < mueveAlmacenamiento; i++) {
-		if(Integer.toString(dia) == artista[i][DIA_PRESENTACION]) {
-			listarArtistas(artista, ID, mueveAlmacenamiento);
+		System.out.println("Por favor, ingrese el dia para ver las bandas que tocaran ahi:");
+		final int DIA_MIN = 1, DIA_MAX = 3;
+		int diaMomentaneo = ingresarEntero(s, DIA_MIN, DIA_MAX);
+		System.out.println("Cronograma para el día " + diaMomentaneo + ":");
+		for(int moverHoraParaOrdenar = 12; moverHoraParaOrdenar <= 23; moverHoraParaOrdenar++) {
+			for(int i = 0; i < mueveAlmacenamiento; i++) {
+	            if (Integer.parseInt(artista[i][3]) == diaMomentaneo && Integer.parseInt(artista[i][5]) == moverHoraParaOrdenar) {
+	                    imprimir(i, artista);
+	            }
+			}
 		}
-		}*/
 	}
 	
-	public void verCronogramaPorEscenario(String[][] artista) {}
+	public static void verCronogramaPorEscenario(Scanner s, String[][] artista, int mueveAlmacenamiento) {
+		System.out.println("Por favor, ingrese el escenario para ver que bandas tocaran en ese lugar: ");
+		final int ESCENARIO_MIN = 1, ESCENARIO_MAX = 4;
+		int escenarioMomentaneo = ingresarEntero(s, ESCENARIO_MIN, ESCENARIO_MAX);
+		System.out.println("Cronograma para el escenario " + escenarioMomentaneo);
+		for(int moverDiaParaOrdenar = 1; moverDiaParaOrdenar <= 3; moverDiaParaOrdenar++) {
+			for(int moverHoraParaOrdenar = 12; moverHoraParaOrdenar <= 23; moverHoraParaOrdenar++) {
+				for(int i = 0; i < mueveAlmacenamiento; i++) {
+					if(Integer.parseInt(artista[i][3]) == moverDiaParaOrdenar && Integer.parseInt(artista[i][5]) == moverHoraParaOrdenar && Integer.parseInt(artista[i][4]) == escenarioMomentaneo) {
+						imprimir(i, artista);
+					}
+				}
+			}
+		}
+	}
 	
 	public static void buscarArtistasPorGenero(Scanner s, String[][] artista, final int GENERO_MUSICAL, int generoMomentaneo, int mueveAlmacenamiento) {
 		System.out.println("Por favor, ingrese el genero de su banda: ");
 		System.out.println("Recuerde que: 1 \\\"Rock\\\" - 2  \\\"Pop\\\" - 3  \\\"Electrónica\\\" - 4  \\\"Hip Hop\\\" - 5  \\\"Indie\\\" - 6  \\\"Metal\\\" - 7  \\\"Otros\\");
-		generoMomentaneo = s.nextInt();
+		final int GENERO_MIN = 1, GENERO_MAX = 7;
+		generoMomentaneo = ingresarEntero(s, GENERO_MIN, GENERO_MAX);
 			for(int i = 0; i < mueveAlmacenamiento; i++ ) {
 				if(generoMomentaneo == Integer.parseInt(artista[i][2])) {
 					imprimir(i, artista);
@@ -288,7 +310,9 @@ public class lollapalooza {
 		}
 	}
 	
-	public void calcularEstadisticas() {}
+	public void calcularEstadisticas(String[][] artista) {
+		
+	}
 	
 	public static int ingresarEntero(Scanner s, final int ID_MIN, final int ID_MAX) {
 		if(ID_MIN > ID_MAX) {

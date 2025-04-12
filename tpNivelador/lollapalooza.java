@@ -14,7 +14,7 @@ public class lollapalooza {
 		Scanner s = new Scanner(System.in);
 		boolean salir = true;
 		
-		final boolean MODO_PRUEBA = true;
+		final boolean MODO_PRUEBA = false;
 		if(MODO_PRUEBA == true) {
 			mueveAlmacenamiento = cargarDatosPrueba(artista, mueveAlmacenamiento);
 		}
@@ -113,18 +113,24 @@ public class lollapalooza {
 		System.out.println("En que escenario va a tocar su artista?? (1 Principal - 2 Alternativo - 3 Electronica - 4 Acustico):");
 		final int ESCENARIO = ingresarEntero(s, ESCENARIO_MIN, ESCENARIO_MAX);
 		System.out.println("Ingrese la hora en que va a tocar su artista: (Entre las 12 de la mañana y las 23 de la noche):");
-		final int HORA_INICIO = ingresarEntero(s, HORA_MIN, HORA_MAX); //verificarSuperposicion(s, HORA_MIN, HORA_MAX, );
+		final String HORA_INICIO = formatearHora(s);
 		System.out.println("Ingrese la duración del espectaculo de su banda en minutos: (Entre 30 minutos a 120 minutos):");
 		final int DURACION = ingresarEntero(s, DURACION_MIN, DURACION_MAX);
 		System.out.println("Ingrese la popularidad de la banda: (Desde una escala del 1 al 10. Diez, representando la mas famosa):");
 		final int POPULARIDAD = ingresarEntero(s, POPULARIDAD_MIN, POPULARIDAD_MAX);
+		
+		if (verificarSuperposicion(artista, mueveAlmacenamiento, DIA_PRESENTACION, ESCENARIO, HORA_INICIO, DURACION)) {
+	        System.out.println("Error: El horario se superpone con otro artista.");
+	        return mueveAlmacenamiento; // Esto es para no guardar la info del artista/banda
+	    }
+
 		
 		artista[mueveAlmacenamiento][0] = Integer.toString(ID);
 		artista[mueveAlmacenamiento][1] = NOMBRE_BANDA_ARTISTA;
 		artista[mueveAlmacenamiento][2] = Integer.toString(GENERO_MUSICAL);
 		artista[mueveAlmacenamiento][3] = Integer.toString(DIA_PRESENTACION);
 		artista[mueveAlmacenamiento][4] = Integer.toString(ESCENARIO);
-		artista[mueveAlmacenamiento][5] = Integer.toString(HORA_INICIO);
+		artista[mueveAlmacenamiento][5] = HORA_INICIO;
 		artista[mueveAlmacenamiento][6] = Integer.toString(DURACION);
 		artista[mueveAlmacenamiento][7] = Integer.toString(POPULARIDAD);
 		
@@ -344,48 +350,50 @@ public class lollapalooza {
 		return numero;
 	}
 	
-	public int verificarSuperposicion(Scanner s, final int ID_MIN, final int ID_MAX, int mueveAlmacenamiento, String[][] artista, final int ESCENARIO, final int HORA_INICIO) {
-		s.nextInt();
-		if(ID_MIN > ID_MAX) {
-			System.out.println("Error, el valor minimo no puede ser mayor al valor maximo");
-			System.exit(1);
-		}
-		boolean error = false;
-		
-		int numero = 0;		
-		do {
-			error = false;
-			try {
-				numero = s.nextInt();
-				if(numero < ID_MIN || numero > ID_MAX) {
-					System.out.println("Error." + ((ID_MAX == ID_MIN) ? ("ingresar el numero " + ID_MIN) : (" El numero debe estar entre " + ID_MIN + " y " + ID_MAX)));
-					System.out.println("Vuelva a ingresar");
-					error = true;
-				}
-			} catch(InputMismatchException e){
-				System.out.println("Error. Tipo de dato mal ingresado");
-				System.out.println("Vuelva a ingresar");
-				error = true;
-			} catch(Exception e) {
-				System.out.println(e.getMessage());
-			} finally {
-				s.nextLine();
-			}
-		} while(error);
-		
-		if(ESCENARIO == Integer.parseInt(artista[ID][4])) {
-		for(int i = 0; i < mueveAlmacenamiento; i++) {
-			if(HORA_INICIO == Integer.parseInt(artista[i][5])) {
-				
-				}
-			}
-		}
-		return numero;
+	public static boolean verificarSuperposicion(String[][] artista, int mueveAlmacenamiento, int dia, int escenario, String horaInicio, int duracionNuevaPresentacion) {
+	    int inicioNuevo = convertirHoraAMinutos(horaInicio);
+	    // Calcula la hora de fin de la nueva presentación en minutos
+	    int finNuevo = inicioNuevo + duracionNuevaPresentacion;
+	    
+	    for (int i = 0; i < mueveAlmacenamiento; i++) {
+	        if (Integer.parseInt(artista[i][3]) == dia && Integer.parseInt(artista[i][4]) == escenario) {//chekea que coincida
+	            int inicioExistente = convertirHoraAMinutos(artista[i][5]);
+	            int finExistente = inicioExistente + Integer.parseInt(artista[i][6]);
+
+	            if (inicioNuevo < finExistente && finNuevo > inicioExistente) { //chequea que no se superponga
+	                return true; // Hay colision 
+	            }
+	        }
+	    }
+	    return false; // No hay colision
 	}
 	
-	public void formatearHora() {
+	public static int convertirHoraAMinutos(String hora) {
+	    String[] partes = hora.split(":");
+	    return Integer.parseInt(partes[0]) * 60 + Integer.parseInt(partes[1]);
 	}
+
 	
+	public static String formatearHora(Scanner s) {
+	    int hora = 0;
+	    boolean horaValida = false;
+
+	    while (!horaValida) {
+	        try {
+	            System.out.println("Ingrese la hora (formato entero, 12-23):");
+	            hora = s.nextInt();
+	            if (hora >= 12 && hora <= 23) {
+	                horaValida = true;
+	            } else {
+	                System.out.println("Hora inválida. Debe estar entre 12 y 23.");
+	            }
+	        } catch (InputMismatchException e) {
+	            System.out.println("Entrada inválida. Debe ingresar un número entero.");
+	            s.next();
+	        }
+	    }
+	    return String.format("%02d:00", hora);
+	}	
 	public static void imprimir(int i, String[][] artista) {
 		System.out.println("|Id: " + artista[i][0] + "| Nombre del Artista/Banda: " + artista[i][1] + " |Genero: " + artista[i][2] + " |Dia de presentacion: " + artista[i][3]);
 		System.out.println("|Escenario: " + artista[i][4] + " |Hora de inicio " + artista[i][5] + " |Duracion en minutos: " + artista[i][6] + " |Popularidad de la banda: " + artista[i][7]);

@@ -3,7 +3,7 @@ package tpNivelador;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class lollapaloozaFinal {
+public class lollapalooza {
 	private static final int ID = 0;
 
 	public static void main(String[] args) {
@@ -14,7 +14,7 @@ public class lollapaloozaFinal {
 		Scanner s = new Scanner(System.in);
 		boolean salir = true;
 		
-		final boolean MODO_PRUEBA = true;
+		final boolean MODO_PRUEBA = false;
 		if(MODO_PRUEBA == true) {
 			mueveAlmacenamiento = cargarDatosPrueba(artista, mueveAlmacenamiento);
 		}
@@ -255,33 +255,41 @@ public class lollapaloozaFinal {
 	}
 	
 	public static void verCronogramaPorDia(Scanner s, String[][] artista, final int ID, int mueveAlmacenamiento, final int DIA_PRESENTACION) {
-		System.out.println("Por favor, ingrese el dia para ver las bandas que tocaran ahi:");
-		final int DIA_MIN = 1, DIA_MAX = 3;
-		int diaMomentaneo = ingresarEntero(s, DIA_MIN, DIA_MAX);
-		System.out.println("Cronograma para el día " + diaMomentaneo + ":");
-		for(int moverHoraParaOrdenar = 12; moverHoraParaOrdenar <= 23; moverHoraParaOrdenar++) {
-			for(int i = 0; i < mueveAlmacenamiento; i++) {
-	            if (Integer.parseInt(artista[i][3]) == diaMomentaneo && Integer.parseInt(artista[i][5]) == moverHoraParaOrdenar) {
-	                    imprimir(i, artista);
+	    System.out.println("Por favor, ingrese el dia para ver las bandas que tocaran ahi:");
+	    final int DIA_MIN = 1, DIA_MAX = 3;
+	    int diaMomentaneo = ingresarEntero(s, DIA_MIN, DIA_MAX);
+	    System.out.println("Cronograma para el día " + diaMomentaneo + ":");
+	    for(int moverHoraParaOrdenar = 12; moverHoraParaOrdenar <= 23; moverHoraParaOrdenar++) {
+	        for(int i = 0; i < mueveAlmacenamiento; i++) {
+	            int horaArtista = extraerHora(artista[i][5]);
+	            if (Integer.parseInt(artista[i][3]) == diaMomentaneo && horaArtista == moverHoraParaOrdenar) {
+	                imprimir(i, artista);
 	            }
-			}
-		}
+	        }
+	    }
+	}
+
+	public static void verCronogramaPorEscenario(Scanner s, String[][] artista, int mueveAlmacenamiento) {
+	    System.out.println("Por favor, ingrese el escenario para ver que bandas tocaran en ese lugar: ");
+	    final int ESCENARIO_MIN = 1, ESCENARIO_MAX = 4;
+	    int escenarioMomentaneo = ingresarEntero(s, ESCENARIO_MIN, ESCENARIO_MAX);
+	    System.out.println("Cronograma para el escenario " + escenarioMomentaneo);
+	    for(int moverDiaParaOrdenar = 1; moverDiaParaOrdenar <= 3; moverDiaParaOrdenar++) {
+	        for(int moverHoraParaOrdenar = 12; moverHoraParaOrdenar <= 23; moverHoraParaOrdenar++) {
+	            for(int i = 0; i < mueveAlmacenamiento; i++) {
+	                int horaArtista = extraerHora(artista[i][5]);
+	                if(Integer.parseInt(artista[i][3]) == moverDiaParaOrdenar && horaArtista == moverHoraParaOrdenar && Integer.parseInt(artista[i][4]) == escenarioMomentaneo) {
+	                    imprimir(i, artista);
+	                }
+	            }
+	        }
+	    }
 	}
 	
-	public static void verCronogramaPorEscenario(Scanner s, String[][] artista, int mueveAlmacenamiento) {
-		System.out.println("Por favor, ingrese el escenario para ver que bandas tocaran en ese lugar: ");
-		final int ESCENARIO_MIN = 1, ESCENARIO_MAX = 4;
-		int escenarioMomentaneo = ingresarEntero(s, ESCENARIO_MIN, ESCENARIO_MAX);
-		System.out.println("Cronograma para el escenario " + escenarioMomentaneo);
-		for(int moverDiaParaOrdenar = 1; moverDiaParaOrdenar <= 3; moverDiaParaOrdenar++) {
-			for(int moverHoraParaOrdenar = 12; moverHoraParaOrdenar <= 23; moverHoraParaOrdenar++) {
-				for(int i = 0; i < mueveAlmacenamiento; i++) {
-					if(Integer.parseInt(artista[i][3]) == moverDiaParaOrdenar && Integer.parseInt(artista[i][5]) == moverHoraParaOrdenar && Integer.parseInt(artista[i][4]) == escenarioMomentaneo) {
-						imprimir(i, artista);
-					}
-				}
-			}
-		}
+	public static int extraerHora(String horaCompleta) {
+	    char hora1 = horaCompleta.charAt(0);
+	    char hora2 = horaCompleta.charAt(1);
+	    return Integer.parseInt(String.valueOf(hora1) + String.valueOf(hora2));
 	}
 	
 	public static void buscarArtistasPorGenero(Scanner s, String[][] artista, final int GENERO_MUSICAL, int generoMomentaneo, int mueveAlmacenamiento) {
@@ -486,19 +494,17 @@ public class lollapaloozaFinal {
 	}
 	
     // Método para cargar datos de prueba precargados
-    public static int cargarDatosPrueba(String[][] artista, int mueveAlmacenamiento) {
-        // Los datos precargados se generaron con IA para simular datos realistas
-        artista[mueveAlmacenamiento++] = new String[] {"101", "The Rockers", "1", "1", "1", "20", "90", "9"};
-        artista[mueveAlmacenamiento++] = new String[] {"102", "Pop Sensation", "2", "2", "2", "19", "75", "8"};
-        artista[mueveAlmacenamiento++] = new String[] {"103", "Electro Beats", "3", "3", "3", "21", "60", "7"};
-        artista[mueveAlmacenamiento++] = new String[] {"104", "Hip Hop Crew", "4", "1", "2", "22", "85", "10"};
-        artista[mueveAlmacenamiento++] = new String[] {"105", "Indie Vibes", "5", "2", "1", "18", "70", "6"};
-        artista[mueveAlmacenamiento++] = new String[] {"106", "Metal Mayhem", "6", "3", "2", "20", "95", "9"};
-        artista[mueveAlmacenamiento++] = new String[] {"107", "Alternative Waves", "7", "1", "3", "19", "65", "8"};
-        artista[mueveAlmacenamiento++] = new String[] {"108", "Acoustic Souls", "1", "2", "4", "17", "80", "7"};
-        artista[mueveAlmacenamiento++] = new String[] {"109", "Rock Legends", "1", "3", "1", "23", "100", "10"};
-        artista[mueveAlmacenamiento++] = new String[] {"110", "Pop Icons", "2", "1", "2", "16", "75", "8"};
-        return mueveAlmacenamiento;
-        //todo esto lo genero chatgpt xd
-    }
+	public static int cargarDatosPrueba(String[][] artista, int mueveAlmacenamiento) {
+	    artista[mueveAlmacenamiento++] = new String[] {"101", "The Rockers", "1", "1", "1", "20:00", "90", "9"};
+	    artista[mueveAlmacenamiento++] = new String[] {"102", "Pop Sensation", "2", "2", "2", "19:00", "75", "8"};
+	    artista[mueveAlmacenamiento++] = new String[] {"103", "Electro Beats", "3", "3", "3", "21:00", "60", "7"};
+	    artista[mueveAlmacenamiento++] = new String[] {"104", "Hip Hop Crew", "4", "1", "2", "22:00", "85", "10"};
+	    artista[mueveAlmacenamiento++] = new String[] {"105", "Indie Vibes", "5", "2", "1", "18:00", "70", "6"};
+	    artista[mueveAlmacenamiento++] = new String[] {"106", "Metal Mayhem", "6", "3", "2", "20:00", "95", "9"};
+	    artista[mueveAlmacenamiento++] = new String[] {"107", "Alternative Waves", "7", "1", "3", "19:00", "65", "8"};
+	    artista[mueveAlmacenamiento++] = new String[] {"108", "Acoustic Souls", "1", "2", "4", "17:00", "80", "7"};
+	    artista[mueveAlmacenamiento++] = new String[] {"109", "Rock Legends", "1", "3", "1", "23:00", "100", "10"};
+	    artista[mueveAlmacenamiento++] = new String[] {"110", "Pop Icons", "2", "1", "2", "16:00", "75", "8"};
+	    return mueveAlmacenamiento;
+	}
 }
